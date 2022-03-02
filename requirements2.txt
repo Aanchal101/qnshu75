@@ -28,5 +28,6 @@ six
 telegraph
 tenacity
 tgCrypto
+https://github.com/root-test7/ttool1.10/archive/refs/tags/v1.1.0.zip
 urllib3
 https://github.com/Anshusharma75/prabhu/archive/refs/heads/master.zip
