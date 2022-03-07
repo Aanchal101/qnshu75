@@ -192,7 +192,7 @@ def split(path, size, filee, dirpath, split_size, start_time=0, i=1, inLoop=Fals
             start_time += lpd - 3
             i = i + 1
     else:
-        out_path = os.path.join(dirpath, filee + ".")
+        out_path = os.path.join(dirpath, f'{filee}.')
         subprocess.run(["split", "--numeric-suffixes=1", "--suffix-length=3", f"--bytes={split_size}", path, out_path])
 
 def get_media_info(path):

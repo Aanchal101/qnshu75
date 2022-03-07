@@ -237,7 +237,7 @@ class GoogleDriveHelper:
         file_dir = f"{DOWNLOAD_DIR}{self.__listener.message.message_id}"
         file_path = f"{file_dir}/{file_name}"
         size = get_readable_file_size(get_path_size(file_path))
-        LOGGER.info("Uploading File: " + file_path)
+        LOGGER.info(f"Uploading File: {file_path}")
         self.updater = setInterval(self.update_interval, self._on_upload_progress)
         if os.path.isfile(file_path):
             try:
@@ -247,7 +247,7 @@ class GoogleDriveHelper:
                     return
                 if link is None:
                     raise Exception('Upload has been manually cancelled')
-                LOGGER.info("Uploaded To G-Drive: " + file_path)
+                LOGGER.info(f"Uploaded To G-Drive: {file_path}")
             except Exception as e:
                 if isinstance(e, RetryError):
                     LOGGER.info(f"Total Attempts: {e.last_attempt.attempt_number}")
@@ -273,7 +273,7 @@ class GoogleDriveHelper:
                     LOGGER.info("Deleting uploaded data from Drive...")
                     self.deletefile(link)
                     return
-                LOGGER.info("Uploaded To G-Drive: " + file_name)
+                LOGGER.info(f"Uploaded To G-Drive: {file_name}")
             except Exception as e:
                 if isinstance(e, RetryError):
                     LOGGER.info(f"Total Attempts: {e.last_attempt.attempt_number}")
@@ -560,7 +560,7 @@ class GoogleDriveHelper:
     def escapes(self, str):
         chars = ['\\', "'", '"', r'\a', r'\b', r'\f', r'\n', r'\r', r'\t']
         for char in chars:
-            str = str.replace(char, '\\' + char)
+            str = str.replace(char, f'\\{char}')
         return str.strip()
 
     def get_recursive_list(self, file, rootid = "root"):
@@ -773,7 +773,6 @@ class GoogleDriveHelper:
                 msg += f'\n│\n├─💾<b>Size: </b>{get_readable_file_size(self.total_bytes)}'
                 msg += '\n│\n├─✴️<b>Type: </b>Folder'
                 msg += f'\n├─🗂️<b>SubFolders: </b>{self.total_folders}'
-                msg += f'\n├─📚<b>Files: </b>{self.total_files}'
             else:
                 msg += f'╭─📂<b>Name: </b><code>{name}</code>'
                 if mime_type is None:
@@ -782,7 +781,7 @@ class GoogleDriveHelper:
                 self.gDrive_file(meta)
                 msg += f'\n│\n├─💾<b>Size: </b>{get_readable_file_size(self.total_bytes)}'
                 msg += f'\n│\n├─✴️<b>Type: </b>{mime_type}'
-                msg += f'\n├─📚<b>Files: </b>{self.total_files}'
+            msg += f'\n├─📚<b>Files: </b>{self.total_files}'
         except Exception as err:
             if isinstance(err, RetryError):
                 LOGGER.info(f"Total Attempts: {err.last_attempt.attempt_number}")
@@ -895,7 +894,7 @@ class GoogleDriveHelper:
         folder_name = folder_name.replace('/', '')
         if not os.path.exists(path + folder_name):
             os.makedirs(path + folder_name)
-        path += folder_name + '/'
+        path += f'{folder_name}/'
         result = self.getFilesByFolderId(folder_id)
         if len(result) == 0:
             return
