@@ -125,7 +125,6 @@ def aria2c_init():
             aria2.remove([download], force=True, files=True)
     except Exception as e:
         logging.error(f"Aria2c initializing error: {e}")
-        pass
 
 if not os.path.isfile(".restartmsg"):
     threading.Thread(target=aria2c_init).start()

@@ -92,7 +92,7 @@ class TgUploader:
                     else:
                         width, height = get_video_resolution(up_path)
                     if not filee.upper().endswith(("MKV", "MP4")):
-                        filee = os.path.splitext(filee)[0] + '.mp4'
+                        filee = f'{os.path.splitext(filee)[0]}.mp4'
                         new_path = os.path.join(dirpath, filee)
                         os.rename(up_path, new_path)
                         up_path = new_path

@@ -80,16 +80,16 @@ class MirrorListener(listeners.MirrorListeners):
                 with download_dict_lock:
                     download_dict[self.uid] = ZipStatus(name, m_path, size)
                 pswd = self.pswd
-                path = m_path + ".zip"
+                path = f'{m_path}.zip'
                 LOGGER.info(f'Zip: orig_path: {m_path}, zip_path: {path}')
                 if pswd is not None:
                     if self.isLeech and int(size) > TG_SPLIT_SIZE:
-                        path = m_path + ".zip"
+                        path = f'{m_path}.zip'
                         subprocess.run(["7z", f"-v{TG_SPLIT_SIZE}b", "a", "-mx=0", f"-p{pswd}", path, m_path])
                     else:
                         subprocess.run(["7z", "a", "-mx=0", f"-p{pswd}", path, m_path])
                 elif self.isLeech and int(size) > TG_SPLIT_SIZE:
-                    path = m_path + ".zip"
+                    path = f'{m_path}.zip'
                     subprocess.run(["7z", f"-v{TG_SPLIT_SIZE}b", "a", "-mx=0", path, m_path])
                 else:
                     subprocess.run(["7z", "a", "-mx=0", path, m_path])
@@ -237,9 +237,7 @@ class MirrorListener(listeners.MirrorListeners):
                 if fmsg != '':
                     time.sleep(1.5)
                     sendMessage(msg + fmsg, self.bot, self.update)
-            if self.isQbit and QB_SEED:
-                return
-            else:
+            if not self.isQbit or not QB_SEED:
                 with download_dict_lock:
                     try:
                         fs_utils.clean_download(download_dict[self.uid].path())
@@ -251,8 +249,7 @@ class MirrorListener(listeners.MirrorListeners):
                     self.clean()
                 else:
                     update_all_messages()
-                return
-
+            return
         with download_dict_lock:
             msg = f'╭─📂<b>Name: </b><code>{download_dict[self.uid].name()}</code>\n│\n├─💾<b>Size: </b>{size}'
             msg += f'│\n│\n├─✴️<b>Type: </b>{typ}'
@@ -293,18 +290,17 @@ class MirrorListener(listeners.MirrorListeners):
         sendMarkup(msg, self.bot, self.update, InlineKeyboardMarkup(buttons.build_menu(2)))
         if self.isQbit and QB_SEED:
             return
+        with download_dict_lock:
+            try:
+                fs_utils.clean_download(download_dict[self.uid].path())
+            except FileNotFoundError:
+                pass
+            del download_dict[self.uid]
+            count = len(download_dict)
+        if count == 0:
+            self.clean()
         else:
-            with download_dict_lock:
-                try:
-                    fs_utils.clean_download(download_dict[self.uid].path())
-                except FileNotFoundError:
-                    pass
-                del download_dict[self.uid]
-                count = len(download_dict)
-            if count == 0:
-                self.clean()
-            else:
-                update_all_messages()
+            update_all_messages()
 
     def onUploadError(self, error):
         e_str = error.replace('<', '').replace('>', '')

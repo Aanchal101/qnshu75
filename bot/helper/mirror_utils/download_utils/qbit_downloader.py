@@ -156,7 +156,7 @@ class QbitTorrent:
                     if qbname.endswith('.!qB'):
                         qbname = os.path.splitext(qbname)[0]
                     if self.listener.isZip:
-                        qbname = qbname + ".zip"
+                        qbname = f'{qbname}.zip'
                     if not self.listener.extract:
                         gd = GoogleDriveHelper()
                         qbmsg, button = gd.drive_list(qbname, True)
